@@ -1,9 +1,16 @@
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
-
+from flask_mysqldb import MySQL
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
+
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'corei7'
+app.config['MYSQL_DB'] = 'flask'
+
+mysql = MySQL(app)
 
 
 @socketio.on('my event')
@@ -24,4 +31,4 @@ def handle_disconnect():
 
 
 if __name__ == '__main__':
-    socketio.run(app, host='192.168.0.154', port=5000, allow_unsafe_werkzeug=True)
+    socketio.run(app, host='192.168.1.139', port=5000, allow_unsafe_werkzeug=True)
