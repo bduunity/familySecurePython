@@ -1,6 +1,9 @@
+import json
+
 from flask import Flask, render_template
 from flask_socketio import SocketIO, emit
 from flask_mysqldb import MySQL
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
@@ -14,9 +17,12 @@ mysql = MySQL(app)
 
 
 @socketio.on('my event')
-def handle_my_custom_event(json):
-    print('received json: ' + str(json))
-    emit('my response', json)
+def handle_my_custom_event(jsonn):
+    print('received json: ' + str(jsonn))
+    json_obj = json.loads(jsonn)
+    data = json_obj['data']
+    print('received data:', data)
+    emit('my response', jsonn)
 
 
 @socketio.on('connect')
