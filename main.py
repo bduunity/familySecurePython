@@ -22,7 +22,16 @@ def handle_my_custom_event(jsonn):
     json_obj = json.loads(jsonn)
     data = json_obj['data']
     print('received data:', data)
-    emit('my response', jsonn)
+    emit('server_response', jsonn)
+
+
+@socketio.on('register')
+def handle_my_custom_event(jsonn):
+    print('received json: ' + str(jsonn))
+    json_obj = json.loads(jsonn)
+    email = json_obj['email']
+    password = json_obj['password']
+    print('Register:', email, password)
 
 
 @socketio.on('connect')
