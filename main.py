@@ -16,13 +16,12 @@ app.config['MYSQL_DB'] = 'taxi'
 mysql = MySQL(app)
 
 
-@socketio.on('my event')
+@socketio.on('message')
 def handle_my_custom_event(jsonn):
     print('received json: ' + str(jsonn))
     json_obj = json.loads(jsonn)
     data = json_obj['data']
     print('received data:', data)
-    emit('server_response', jsonn)
 
 
 @socketio.on('register')
@@ -33,13 +32,28 @@ def handle_my_custom_event(jsonn):
     password = json_obj['password']
     print('Register:', email, password)
 
-    print('Get data from MySQL')
     cur = mysql.connection.cursor()
-    cur.execute('''SELECT * FROM users''')
-    rows = cur.fetchall()
-    for row in rows:
-        print(f'{row}')
-    cur.close()
+    cur.execute('SELECT * FROM users WHERE email = %s', (email,))
+    account = cur.fetchone()
+    if account:
+        print('Error: Email already exists!')
+        cur.close()
+        emit('message', {'message': 'Error: Email already exists!'})
+    else:
+        # If account doesn't exist, add to database
+        cur.execute('INSERT INTO users (email, password) VALUES (%s, %s)', (email, password))
+        mysql.connection.commit()
+        cur.close()
+        print('Registration successful!')
+        emit('message', {'message': 'Registration successful!'})
+
+    # print('Get data from MySQL')
+    # cur = mysql.connection.cursor()
+    # cur.execute('''SELECT * FROM users''')
+    # rows = cur.fetchall()
+    # for row in rows:
+    #     print(f'{row}')
+    # cur.close()
 
 
 @socketio.on('connect')
