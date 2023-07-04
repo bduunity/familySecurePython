@@ -8,10 +8,10 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
-app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_HOST'] = '83.136.233.166'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'corei7'
-app.config['MYSQL_DB'] = 'flask'
+app.config['MYSQL_PASSWORD'] = 'Aa@71077431'
+app.config['MYSQL_DB'] = 'taxi'
 
 mysql = MySQL(app)
 
@@ -32,6 +32,14 @@ def handle_my_custom_event(jsonn):
     email = json_obj['email']
     password = json_obj['password']
     print('Register:', email, password)
+
+    print('Get data from MySQL')
+    cur = mysql.connection.cursor()
+    cur.execute('''SELECT * FROM users''')
+    rows = cur.fetchall()
+    for row in rows:
+        print(f'{row}')
+    cur.close()
 
 
 @socketio.on('connect')
