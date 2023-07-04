@@ -45,7 +45,7 @@ def handle_my_custom_event(jsonn):
         mysql.connection.commit()
         cur.close()
         print('Registration successful!')
-        emit('message', {'message': 'Registration successful!'})
+        emit('register_response', {'message': 'Registration successful!'})
 
     # print('Get data from MySQL')
     # cur = mysql.connection.cursor()
