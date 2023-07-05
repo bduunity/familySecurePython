@@ -15,6 +15,14 @@ app.config['MYSQL_DB'] = 'taxi'
 
 mysql = MySQL(app)
 
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = 'araxmatjonn@gmail.com'
+app.config['MAIL_PASSWORD'] = 'Qosim123!'
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+
+mail = Mail(app)
 
 @socketio.on('message')
 def handle_my_custom_event(jsonn):
@@ -45,7 +53,7 @@ def handle_my_custom_event(jsonn):
         # mysql.connection.commit()
         # cur.close()
         # print('Registration successful!')
-        emit('register_response', {'message': 'Registration successful!'})
+        emit('register_response', {'message': 'Confirm your Email!'})
 
     # print('Get data from MySQL')
     # cur = mysql.connection.cursor()
