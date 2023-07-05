@@ -1,6 +1,7 @@
 import json
 
 from flask import Flask, render_template
+from flask_mail import Mail, Message
 from flask_socketio import SocketIO, emit
 from flask_mysqldb import MySQL
 
@@ -18,11 +19,12 @@ mysql = MySQL(app)
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 465
 app.config['MAIL_USERNAME'] = 'araxmatjonn@gmail.com'
-app.config['MAIL_PASSWORD'] = 'Qosim123!'
+app.config['MAIL_PASSWORD'] = 'iyuqbznfpgilimpv'
 app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 
 mail = Mail(app)
+
 
 @socketio.on('message')
 def handle_my_custom_event(jsonn):
@@ -53,6 +55,10 @@ def handle_my_custom_event(jsonn):
         # mysql.connection.commit()
         # cur.close()
         # print('Registration successful!')
+        msg = Message('Hello', sender='araxmatjonn@gmail.com', recipients=[email])
+        msg.body = "This is the email body"
+        mail.send(msg)
+        print("Message sent!")
         emit('register_response', {'message': 'Confirm your Email!'})
 
     # print('Get data from MySQL')
