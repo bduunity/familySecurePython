@@ -1,4 +1,5 @@
 import json
+import random
 
 from flask import Flask, render_template
 from flask_mail import Mail, Message
@@ -55,14 +56,15 @@ def handle_my_custom_event(jsonn):
         # mysql.connection.commit()
         # cur.close()
         # print('Registration successful!')
+
         msg = Message('Hello', sender='araxmatjonn@gmail.com', recipients=[email])
-        msg.body = "This is the email body"
+        msg.body = "Your code: " + str(generate_five_digit_number())
         mail.send(msg)
         print("Message sent!")
         emit('register_response', {'message': 'Confirm your Email!'})
 
     # print('Get data from MySQL')
-    # cur = mysql.connection.cursor()
+    # cur = mysql.connection.cursor()u
     # cur.execute('''SELECT * FROM users''')
     # rows = cur.fetchall()
     # for row in rows:
@@ -79,6 +81,10 @@ def handle_connect():
 @socketio.on('disconnect')
 def handle_disconnect():
     print('Client disconnected')
+
+
+def generate_five_digit_number():
+    return random.randint(10000, 99999)
 
 
 if __name__ == '__main__':
