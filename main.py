@@ -38,7 +38,7 @@ def handle_my_custom_event(jsonn):
     if account:
         print('Error: Email already exists!')
         cur.close()
-        emit('message', {'message': 'Error: Email already exists!'})
+        emit('register_response', {'message': 'Error: Email already exists!'})
     else:
         # If account doesn't exist, add to database
         cur.execute('INSERT INTO users (email, password) VALUES (%s, %s)', (email, password))
