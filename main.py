@@ -28,7 +28,7 @@ mail = Mail(app)
 
 
 @socketio.on('message')
-def handle_my_custom_event(jsonn):
+def handle_my_custom_event_message(jsonn):
     print('received json: ' + str(jsonn))
     json_obj = json.loads(jsonn)
     data = json_obj['data']
@@ -36,7 +36,7 @@ def handle_my_custom_event(jsonn):
 
 
 @socketio.on('register')
-def handle_my_custom_event(jsonn):
+def handle_my_custom_event_register(jsonn):
     print('received json: ' + str(jsonn))
     json_obj = json.loads(jsonn)
     email = json_obj['email']
@@ -85,7 +85,7 @@ def handle_my_custom_event(jsonn):
 
 
 @socketio.on('email_confirm')
-def handle_my_custom_event(jsonn):
+def handle_my_custom_event_email_confirm(jsonn):
     print('received json: ' + str(jsonn))
 
     json_obj = json.loads(jsonn)
