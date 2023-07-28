@@ -65,10 +65,10 @@ def handle_my_custom_event_register(jsonn):
             cur.close()
             emit('register_response', {'message': 'Email confirmation code already has been sent!'})
         else:
-           # msg = Message('Family Secure', sender='araxmatjonn@gmail.com', recipients=[email])
+            # msg = Message('Family Secure', sender='araxmatjonn@gmail.com', recipients=[email])
             code = generate_five_digit_number()
-           # msg.body = "Your code: " + str(code)
-           # mail.send(msg)
+            # msg.body = "Your code: " + str(code)
+            # mail.send(msg)
             print("Message sent!")
             emit('register_response', {'message': 'Confirm your Email!'})
             cur.execute('INSERT INTO confirm_email (email, code) VALUES (%s, %s)', (email, code))
@@ -119,6 +119,31 @@ def handle_my_custom_event_email_confirm(jsonn):
             emit('email_confirm_response', {'message': 'Incorrect Code!', 'status': False})
 
         print('received data:', email, email_code)
+
+
+@socketio.on('user_login')
+def handle_my_custom_event_login(jsonn):
+    print('received json: ' + str(jsonn))
+
+    json_obj = json.loads(jsonn)
+    email = json_obj['email']
+    passwd = json_obj['passwd']
+
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT email, password FROM users WHERE email = %s AND password = %s', (email, passwd,))
+    result = cur.fetchone()
+
+    result_email = result[0]
+    result_passwd = str(result[1])
+    print(result_email, result_passwd)
+
+    if result_email == email and result_passwd == passwd:
+        new_token = secrets.token_hex(5)
+        cur.execute('UPDATE users SET token = %s WHERE email = %s AND password = %s', (new_token, email, passwd,))
+        mysql.connection.commit()
+        emit('login_response', {'message': 'Login Success!', 'status': True, 'token': new_token})
+    else:
+        emit('login_response', {'message': 'Login Fail!', 'status': False})
 
 
 @socketio.on('connect')
