@@ -133,6 +133,7 @@ def handle_my_custom_event_login(jsonn):
     cur.execute('SELECT email, password FROM users WHERE email = %s AND password = %s', (email, passwd,))
     result = cur.fetchone()
 
+
     result_email = result[0]
     result_passwd = str(result[1])
     print(result_email, result_passwd)
