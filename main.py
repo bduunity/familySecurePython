@@ -93,11 +93,13 @@ def handle_my_custom_event_email_confirm(jsonn):
     email_code = json_obj['email_code']
 
     cur = mysql.connection.cursor()
-    cur.execute('SELECT code FROM confirm_email WHERE email = %s', email)
+    cur.execute('SELECT email, code FROM confirm_email WHERE email = %s', [email])
     result = cur.fetchone()
 
-    if result is not None and result[0] == email_code:
-        emit('register_response', {'message': 'Error: Email already exists!'})
+    if result is not None and result[0] == email and result[1] == email_code:
+        emit('register_response', {'message': 'Email confirm Success!', 'status': True})
+    else:
+        emit('register_response', {'message': 'Incorrect Code!', 'status': False})
 
     print('received data:', email, email_code)
 
