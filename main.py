@@ -140,9 +140,10 @@ def handle_my_custom_event_login(jsonn):
 
     if result_email == email and result_passwd == passwd:
         new_token = secrets.token_hex(5)
-        cur.execute('UPDATE users SET token = %s WHERE email = %s AND password = %s', (new_token, email, passwd,))
+        cur.execute('UPDATE users SET token = %s WHERE email = %s AND password = %s', (new_token, result_email, result_passwd))
         mysql.connection.commit()
-        emit('login_response', {'message': 'Login Success!', 'status': True, 'token': new_token})
+        emit('login_response', {'message': 'Login Success!', 'status': False, 'token': new_token})
+        print(new_token)
     else:
         emit('login_response', {'message': 'Login Fail!', 'status': False})
 
