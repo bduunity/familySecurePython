@@ -64,10 +64,10 @@ def handle_my_custom_event_register(jsonn):
             cur.close()
             emit('register_response', {'message': 'Email confirmation code already has been sent!'})
         else:
-            msg = Message('Family Secure', sender='araxmatjonn@gmail.com', recipients=[email])
+           # msg = Message('Family Secure', sender='araxmatjonn@gmail.com', recipients=[email])
             code = generate_five_digit_number()
-            msg.body = "Your code: " + str(code)
-            mail.send(msg)
+           # msg.body = "Your code: " + str(code)
+           # mail.send(msg)
             print("Message sent!")
             emit('register_response', {'message': 'Confirm your Email!'})
             cur.execute('INSERT INTO confirm_email (email, code) VALUES (%s, %s)', (email, code))
@@ -89,19 +89,26 @@ def handle_my_custom_event_email_confirm(jsonn):
     print('received json: ' + str(jsonn))
 
     json_obj = json.loads(jsonn)
-    email = json_obj['email']
-    email_code = json_obj['email_code']
+    email = json_obj['email'].strip()
+    email_code = json_obj['email_code'].strip()
 
     cur = mysql.connection.cursor()
-    cur.execute('SELECT email, code FROM confirm_email WHERE email = %s', [email])
+    cur.execute('SELECT email, code FROM confirm_email WHERE email = %s', (email,))
     result = cur.fetchone()
 
-    if result is not None and result[0] == email and result[1] == email_code:
-        emit('register_response', {'message': 'Email confirm Success!', 'status': True})
-    else:
-        emit('register_response', {'message': 'Incorrect Code!', 'status': False})
+    if result is not None:
+        result_email = result[0].strip()
+        result_code = str(result[1]).strip()
+        print(result_email, result_code)
 
-    print('received data:', email, email_code)
+        if result_email == email and result_code == email_code:
+            emit('email_confirm_response', {'message': 'Email confirm Success!', 'status': True})
+            cur.execute('DELETE FROM confirm_email WHERE email = %s', (email,))
+            mysql.connection.commit()  # Don't forget to commit the changes
+        else:
+            emit('email_confirm_response', {'message': 'Incorrect Code!', 'status': False})
+
+        print('received data:', email, email_code)
 
 
 @socketio.on('connect')
