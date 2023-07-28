@@ -5,6 +5,7 @@ from flask import Flask, render_template
 from flask_mail import Mail, Message
 from flask_socketio import SocketIO, emit
 from flask_mysqldb import MySQL
+import secrets
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
@@ -91,6 +92,7 @@ def handle_my_custom_event_email_confirm(jsonn):
     json_obj = json.loads(jsonn)
     email = json_obj['email'].strip()
     email_code = json_obj['email_code'].strip()
+    passwd = json_obj['passwd'].strip()
 
     cur = mysql.connection.cursor()
     cur.execute('SELECT email, code FROM confirm_email WHERE email = %s', (email,))
@@ -102,9 +104,17 @@ def handle_my_custom_event_email_confirm(jsonn):
         print(result_email, result_code)
 
         if result_email == email and result_code == email_code:
-            emit('email_confirm_response', {'message': 'Email confirm Success!', 'status': True})
             cur.execute('DELETE FROM confirm_email WHERE email = %s', (email,))
             mysql.connection.commit()  # Don't forget to commit the changes
+
+            token = secrets.token_hex(5)
+
+            cur.execute('INSERT INTO users (email, password, token) VALUES (%s, %s, %s)', (email, passwd, token))
+            mysql.connection.commit()
+            cur.close()
+
+            emit('email_confirm_response', {'message': 'Email confirm Success!', 'status': True, 'token': token})
+
         else:
             emit('email_confirm_response', {'message': 'Incorrect Code!', 'status': False})
 
