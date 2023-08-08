@@ -28,6 +28,31 @@ app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
 
+@socketio.on('get_child_list')
+def get_child_list(jsonn):
+    print('received json: ' + str(jsonn))
+
+    json_obj = json.loads(jsonn)
+    email = json_obj['email']
+
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT id FROM users WHERE email = %s ', (email,))
+    result_id = cur.fetchone()
+    cur.close()
+
+    if result_id is not None:
+        cur = mysql.connection.cursor()
+        cur.execute('SELECT name FROM childs WHERE parent_id = %s ', (result_id[0],))
+        result_child_names = cur.fetchall()
+        cur.close()
+        print(result_child_names)
+
+        if result_child_names is not None:
+            emit('get_child_list_result', {'message': result_child_names, 'status': True})
+        else:
+            emit('get_child_list_result', {'status': False})
+
+
 @socketio.on('message')
 def handle_my_custom_event_message(jsonn):
     print('received json: ' + str(jsonn))
@@ -133,14 +158,14 @@ def handle_my_custom_event_login(jsonn):
     cur.execute('SELECT email, password FROM users WHERE email = %s AND password = %s', (email, passwd,))
     result = cur.fetchone()
 
-
     result_email = result[0]
     result_passwd = str(result[1])
     print(result_email, result_passwd)
 
     if result_email == email and result_passwd == passwd:
         new_token = secrets.token_hex(5)
-        cur.execute('UPDATE users SET token = %s WHERE email = %s AND password = %s', (new_token, result_email, result_passwd))
+        cur.execute('UPDATE users SET token = %s WHERE email = %s AND password = %s',
+                    (new_token, result_email, result_passwd))
         mysql.connection.commit()
         emit('login_response', {'message': 'Login Success!', 'status': False, 'token': new_token})
         print(new_token)
