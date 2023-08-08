@@ -11,9 +11,9 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'secret!'
 socketio = SocketIO(app)
 
-app.config['MYSQL_HOST'] = '83.136.233.166'
+app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'Aa@71077431'
+app.config['MYSQL_PASSWORD'] = 'corei7'
 app.config['MYSQL_DB'] = 'fsecure'
 
 mysql = MySQL(app)
