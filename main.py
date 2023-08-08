@@ -47,10 +47,12 @@ def get_child_list(jsonn):
         cur.close()
         print(result_child_names)
 
-        if result_child_names is not None:
-            emit('get_child_list_result', {'message': result_child_names, 'status': True})
+        if result_child_names is not None and len(result_child_names) > 0:
+            emit('get_child_list_result', {'message': result_child_names})
         else:
-            emit('get_child_list_result', {'status': False})
+            print("not found")
+            result_child_names = [("Children Not Found",)]  # Setting the default value
+            emit('get_child_list_result', {'message': result_child_names})
 
 
 @socketio.on('message')
