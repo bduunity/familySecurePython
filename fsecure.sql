@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Aug 08, 2023 at 02:52 AM
+-- Generation Time: Aug 08, 2023 at 09:17 AM
 -- Server version: 8.0.33-0ubuntu0.22.04.4
 -- PHP Version: 8.1.2-1ubuntu2.13
 
@@ -20,6 +20,26 @@ SET time_zone = "+00:00";
 --
 -- Database: `fsecure`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `childs`
+--
+
+CREATE TABLE `childs` (
+  `id` int NOT NULL,
+  `email` varchar(50) COLLATE utf8mb4_german2_ci NOT NULL,
+  `parent_id` int NOT NULL,
+  `name` varchar(50) COLLATE utf8mb4_german2_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_german2_ci;
+
+--
+-- Dumping data for table `childs`
+--
+
+INSERT INTO `childs` (`id`, `email`, `parent_id`, `name`) VALUES
+(4, 'asd', 3, 'asd');
 
 -- --------------------------------------------------------
 
@@ -58,6 +78,12 @@ INSERT INTO `users` (`id`, `email`, `password`, `token`) VALUES
 --
 
 --
+-- Indexes for table `childs`
+--
+ALTER TABLE `childs`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `confirm_email`
 --
 ALTER TABLE `confirm_email`
@@ -72,6 +98,12 @@ ALTER TABLE `users`
 --
 -- AUTO_INCREMENT for dumped tables
 --
+
+--
+-- AUTO_INCREMENT for table `childs`
+--
+ALTER TABLE `childs`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT for table `confirm_email`
