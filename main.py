@@ -28,6 +28,48 @@ app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
 
+@socketio.on('add_child')
+def handle_my_custom_event_add_child(jsonn):
+    print('received json: ' + str(jsonn))
+
+    json_obj = json.loads(jsonn)
+    code = json_obj['code']
+    email = json_obj['email']
+
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT deviceImei, code FROM confirm_child WHERE code = %s', (code,))
+    result = cur.fetchone()
+    cur.close()
+
+    if result is not None and str(result[1]).strip() == code:
+
+        cur_id = mysql.connection.cursor()
+        cur_id.execute('SELECT id FROM users WHERE email = %s ', (email,))
+        result_id = cur_id.fetchone()
+        parent_id = result_id[0]
+        cur_id.close()
+
+        result_code = str(result[1]).strip()
+        result_deviceImei = result[0]
+        print(result_code, result_deviceImei)
+
+        if result_code == code:
+            cur = mysql.connection.cursor()
+            cur.execute('DELETE FROM confirm_child WHERE code = %s', (code,))
+            mysql.connection.commit()  # Don't forget to commit the changes
+            cur.close()
+            cur = mysql.connection.cursor()
+            cur.execute('INSERT INTO childs (deviceImei, parent_id, name) VALUES (%s, %s, %s)',
+                        (result_deviceImei, parent_id, "Child"))
+            mysql.connection.commit()
+            cur.close()
+
+            emit('add_child_response', {'message': 'Child Added!', 'status': True})
+
+        else:
+            emit('add_child_response', {'message': 'Incorrect Code!', 'status': False})
+
+
 @socketio.on('get_child_list')
 def get_child_list(jsonn):
     print('received json: ' + str(jsonn))
