@@ -68,6 +68,8 @@ def handle_my_custom_event_add_child(jsonn):
 
         else:
             emit('add_child_response', {'message': 'Incorrect Code!', 'status': False})
+    else:
+        emit('add_child_response', {'message': 'Incorrect Code!', 'status': False})
 
 
 @socketio.on('get_child_list')
