@@ -1,3 +1,4 @@
+import base64
 import json
 import random
 
@@ -26,6 +27,48 @@ app.config['MAIL_USE_TLS'] = False
 app.config['MAIL_USE_SSL'] = True
 
 mail = Mail(app)
+
+
+@socketio.on('child_auth_check')
+def handle_my_custom_event_child_auth_check(jsonn):
+    encoded_string = jsonn
+    decoded_json_string = base64.b64decode(encoded_string).decode('utf-8')
+    data = json.loads(decoded_json_string)
+    deviceImei = data["deviceImei"]
+    code = data["code"]
+
+    print(deviceImei)
+    print(code)
+
+    cur = mysql.connection.cursor()
+    cur.execute('SELECT deviceImei, code FROM confirm_child WHERE code = %s', (code,))
+    result = cur.fetchone()
+    cur.close()
+
+    if result is not None and str(result[1]).strip() == code:
+        emit('child_auth_check_response', {'status': True})
+    else:
+        emit('child_auth_check_response', {'status': False})
+
+
+
+
+@socketio.on('child_auth')
+def handle_my_custom_event_add_child(jsonn):
+    encoded_string = jsonn
+    decoded_json_string = base64.b64decode(encoded_string).decode('utf-8')
+    data = json.loads(decoded_json_string)
+    deviceImei = data["deviceImei"]
+    code = data["code"]
+
+    cur = mysql.connection.cursor()
+    cur.execute('INSERT INTO confirm_child (deviceImei, code) VALUES (%s, %s)',
+                (deviceImei, code))
+    mysql.connection.commit()
+    cur.close()
+
+    print(deviceImei)
+    print(code)
 
 
 @socketio.on('add_child')

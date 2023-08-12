@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Aug 08, 2023 at 09:17 AM
+-- Generation Time: Aug 12, 2023 at 04:02 AM
 -- Server version: 8.0.33-0ubuntu0.22.04.4
 -- PHP Version: 8.1.2-1ubuntu2.13
 
@@ -29,7 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `childs` (
   `id` int NOT NULL,
-  `email` varchar(50) COLLATE utf8mb4_german2_ci NOT NULL,
+  `deviceImei` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_german2_ci NOT NULL,
   `parent_id` int NOT NULL,
   `name` varchar(50) COLLATE utf8mb4_german2_ci NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_german2_ci;
@@ -38,8 +38,29 @@ CREATE TABLE `childs` (
 -- Dumping data for table `childs`
 --
 
-INSERT INTO `childs` (`id`, `email`, `parent_id`, `name`) VALUES
-(4, 'asd', 3, 'asd');
+INSERT INTO `childs` (`id`, `deviceImei`, `parent_id`, `name`) VALUES
+(17, 'dsa', 4, 'Child');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `confirm_child`
+--
+
+CREATE TABLE `confirm_child` (
+  `id` int NOT NULL,
+  `deviceImei` varchar(50) COLLATE utf8mb4_german2_ci NOT NULL,
+  `code` int NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_german2_ci;
+
+--
+-- Dumping data for table `confirm_child`
+--
+
+INSERT INTO `confirm_child` (`id`, `deviceImei`, `code`) VALUES
+(14, 'ieD1691822447', 632062),
+(15, 'Yp71691823887', 970873),
+(16, 'N8K1691824224', 527971);
 
 -- --------------------------------------------------------
 
@@ -52,6 +73,13 @@ CREATE TABLE `confirm_email` (
   `email` varchar(50) COLLATE utf8mb4_german2_ci NOT NULL,
   `code` int NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_german2_ci;
+
+--
+-- Dumping data for table `confirm_email`
+--
+
+INSERT INTO `confirm_email` (`id`, `email`, `code`) VALUES
+(4, 'dsa@dsa.dsa', 10032);
 
 -- --------------------------------------------------------
 
@@ -71,7 +99,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `email`, `password`, `token`) VALUES
-(3, 'asd@asd.asd', 'asdasd', '8ea7076289');
+(3, 'asd@asd.asd', 'asdasd', '8ea7076289'),
+(4, 'qwe@qwe.qwe', 'qweqwe', '49b29d82ff');
 
 --
 -- Indexes for dumped tables
@@ -81,6 +110,12 @@ INSERT INTO `users` (`id`, `email`, `password`, `token`) VALUES
 -- Indexes for table `childs`
 --
 ALTER TABLE `childs`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indexes for table `confirm_child`
+--
+ALTER TABLE `confirm_child`
   ADD PRIMARY KEY (`id`);
 
 --
@@ -103,19 +138,25 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `childs`
 --
 ALTER TABLE `childs`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
+
+--
+-- AUTO_INCREMENT for table `confirm_child`
+--
+ALTER TABLE `confirm_child`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=18;
 
 --
 -- AUTO_INCREMENT for table `confirm_email`
 --
 ALTER TABLE `confirm_email`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
