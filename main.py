@@ -36,6 +36,30 @@ app.config['MAIL_USE_SSL'] = True
 mail = Mail(app)
 
 
+@socketio.on('save_sms')
+def handle_my_custom_event_child_auth_check(jsonn):
+    encoded_string = jsonn
+    decoded_json_string = base64.b64decode(encoded_string).decode('utf-8')
+    data = json.loads(decoded_json_string)
+    deviceImei = data["deviceImei"]
+    code = data["code"]
+
+    print(deviceImei)
+    print(code)
+
+    # cur = mysql.connection.cursor()
+    # cur.execute('SELECT deviceImei, code FROM confirm_child WHERE code = %s', (code,))
+    # result = cur.fetchone()
+    # cur.close()
+
+    result = db.session.query(ConfirmChild).filter_by(code=code).first()
+
+    if result is not None and str(result[1]).strip() == code:
+        emit('child_auth_check_response', {'status': True})
+    else:
+        emit('child_auth_check_response', {'status': False})
+
+
 @socketio.on('child_auth_check')
 def handle_my_custom_event_child_auth_check(jsonn):
     encoded_string = jsonn
@@ -52,7 +76,7 @@ def handle_my_custom_event_child_auth_check(jsonn):
     # result = cur.fetchone()
     # cur.close()
 
-    result = db.session.query("deviceImei", "code").filter_by(code=code).first()
+    result = db.session.query(ConfirmChild).filter_by(code=code).first()
 
     if result is not None and str(result[1]).strip() == code:
         emit('child_auth_check_response', {'status': True})
@@ -354,10 +378,6 @@ def generate_five_digit_number():
     return random.randint(10000, 99999)
 
 
-if __name__ == '__main__':
-    socketio.run(app, host='192.168.1.139', port=5000, allow_unsafe_werkzeug=True)
-
-
 class ConfirmChild(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     deviceimei = db.Column(db.String(50), nullable=False)
@@ -382,3 +402,7 @@ class ConfirmEmail(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(50), nullable=False)
     code = db.Column(db.Integer)
+
+
+if __name__ == '__main__':
+    socketio.run(app, host='192.168.1.139', port=5000, allow_unsafe_werkzeug=True)
